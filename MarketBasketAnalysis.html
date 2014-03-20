@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>Market Basket Analysis</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>Market Basket Analysis</h1>
+
+<p>Market Basket Analysis is a specific application of Association rule mining, where retail transaction baskets are analysed to find the products which are likely to be purchased together. The analysis output forms the input for  recomendation engines/marketing strategies. The data &ldquo;Web Service Association Data.xls&rdquo; is data taken from Autodesk Inc. where it indicates Products that clients have purchased. The format is according to their ID and product/service.</p>
+
+<h3>Install the &ldquo;arules&rdquo; package and other packages required</h3>
+
+<ol>
+<li>arules contains the apriori function</li>
+<li>gdata is for reading xls</li>
+</ol>
+
+<pre><code class="r">install.packages(&quot;arules&quot;)
+</code></pre>
+
+<pre><code>## Error: trying to use CRAN without setting a mirror
+</code></pre>
+
+<pre><code class="r">install.packages(&quot;gdata&quot;)
+</code></pre>
+
+<pre><code>## Error: trying to use CRAN without setting a mirror
+</code></pre>
+
+<pre><code class="r">
+library(&quot;arules&quot;)
+</code></pre>
+
+<pre><code>## Loading required package: Matrix
+## Loading required package: lattice
+## 
+## Attaching package: &#39;arules&#39;
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     %in%, write
+</code></pre>
+
+<pre><code class="r">library(&quot;gdata&quot;)
+</code></pre>
+
+<pre><code>## gdata: read.xls support for &#39;XLS&#39; (Excel 97-2004) files ENABLED.
+## 
+## gdata: read.xls support for &#39;XLSX&#39; (Excel 2007+) files ENABLED.
+## 
+## Attaching package: &#39;gdata&#39;
+## 
+## The following object is masked from &#39;package:stats&#39;:
+## 
+##     nobs
+## 
+## The following object is masked from &#39;package:utils&#39;:
+## 
+##     object.size
+</code></pre>
+
+<h2>Data Preparation</h2>
+
+<ol>
+<li>Create a data frame from the data using read.xls from the gdata library.</li>
+<li>Create the transaction listing as the data is not in transactional format</li>
+<li>Convert the List into data frame using the plyr library</li>
+</ol>
+
+<pre><code class="r">adwebservices &lt;- read.xls(&quot;Web Service Assocation Data.xls&quot;)
+
+# The data is not in transactional format, which APRIORI function will
+# require, so we have to create the a dataframe with transactions
+attach(adwebservices)
+trans_list &lt;- split(Service.Name, Company.ID)
+head(trans_list)
+</code></pre>
+
+<pre><code>## $`0`
+##  [1] AutoCAD WS                                         
+##  [2] Autodesk PLM 360                                   
+##  [3] Autodesk 360                                       
+##  [4] Autodesk 360 Rendering                             
+##  [5] Autodesk 360 Mobile (Android)                      
+##  [6] Autodesk 360 Mobile (iOS)                          
+##  [7] Autodesk 360 Structural Analysis for Autodesk Revit
+##  [8] Autodesk BIM 360 Field                             
+##  [9] BIM 360 Glue                                       
+## [10] Autodesk Simulation CFD 360                        
+## [11] Factory Process Simulation                         
+## [12] Mockup 360                                         
+## [13] AIM Online                                         
+## [14] Autodesk 360 Infrastructure Modeler (Mobile)       
+## [15] Blink                                              
+## [16] Autodesk Simulation Mechanical 360                 
+## [17] Fusion 360                                         
+## [18] Kraken Simulation                                  
+## [19] AIM 360                                            
+## [20] Robot Structural Analysis 360                      
+## [21] Autodesk Simulation Moldflow Insight 360           
+## 21 Levels: AIM 360 AIM Online AutoCAD WS ... Robot Structural Analysis 360
+## 
+## $`0006E962-C120-475d-80C3-38760B6CB604`
+## [1] Autodesk 360           Autodesk 360 Rendering
+## 21 Levels: AIM 360 AIM Online AutoCAD WS ... Robot Structural Analysis 360
+## 
+## $`0012AFAB-4E22-453b-95B5-DB7816096BDC`
+## [1] Autodesk 360              Autodesk 360 Mobile (iOS)
+## [3] Autodesk 360 Rendering    BIM 360 Glue             
+## 21 Levels: AIM 360 AIM Online AutoCAD WS ... Robot Structural Analysis 360
+## 
+## $`001C582C-A3E9-417e-8E37-43CF7DD890A1`
+## [1] Autodesk Simulation CFD 360        Autodesk Simulation Mechanical 360
+## [3] Robot Structural Analysis 360     
+## 21 Levels: AIM 360 AIM Online AutoCAD WS ... Robot Structural Analysis 360
+## 
+## $`002CAAC5-96AB-4ead-87E2-624A092089F3`
+## [1] Autodesk PLM 360
+## 21 Levels: AIM 360 AIM Online AutoCAD WS ... Robot Structural Analysis 360
+## 
+## $`00367FFB-4B3A-4713-A3D1-AC195FEB217E`
+## [1] Autodesk 360 BIM 360 Glue
+## 21 Levels: AIM 360 AIM Online AutoCAD WS ... Robot Structural Analysis 360
+</code></pre>
+
+<h3>Using the apriori function from arules library, we create the association rules.</h3>
+
+<p>A note on Support: Support is defined as Supp(Z) = P(Z), the probability of the Precedent occuring in the entire set of data.
+A note on Confidence: Confidence is defined as Conf(X -&gt; Y) = Supp(X-&gt;Y)/Supp(X) = P(Y|X). In other words, the probably of Y occuring given X.</p>
+
+<pre><code class="r"># We want to see almost all the types of association rules in the basket. By
+# providing a support of 1% and confidence of 40%.  This allows us to view
+# some rules whereby we have a high confidence and low support, implying
+# that there is untapped sales potential
+basket_rules &lt;- apriori(trans_list, parameter = list(supp = 0.1, conf = 0.4, 
+    target = &quot;rules&quot;))
+</code></pre>
+
+<pre><code>## 
+## parameter specification:
+##  confidence minval smax arem  aval originalSupport support minlen maxlen
+##         0.4    0.1    1 none FALSE            TRUE     0.1      1     10
+##  target   ext
+##   rules FALSE
+## 
+## algorithmic control:
+##  filter tree heap memopt load sort verbose
+##     0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+## 
+## apriori - find association rules with the apriori algorithm
+## version 4.21 (2004.05.09)        (c) 1996-2004   Christian Borgelt
+## set item appearances ...[0 item(s)] done [0.00s].
+## set transactions ...[21 item(s), 26240 transaction(s)] done [0.01s].
+## sorting and recoding items ... [4 item(s)] done [0.00s].
+## creating transaction tree ... done [0.01s].
+## checking subsets of size 1 2 done [0.00s].
+## writing ... [6 rule(s)] done [0.00s].
+## creating S4 object  ... done [0.00s].
+</code></pre>
+
+<pre><code class="r">basket_rules &lt;- apriori(trans_list, parameter = list(supp = 0.01, conf = 0.4, 
+    target = &quot;rules&quot;))
+</code></pre>
+
+<pre><code>## 
+## parameter specification:
+##  confidence minval smax arem  aval originalSupport support minlen maxlen
+##         0.4    0.1    1 none FALSE            TRUE    0.01      1     10
+##  target   ext
+##   rules FALSE
+## 
+## algorithmic control:
+##  filter tree heap memopt load sort verbose
+##     0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+## 
+## apriori - find association rules with the apriori algorithm
+## version 4.21 (2004.05.09)        (c) 1996-2004   Christian Borgelt
+## set item appearances ...[0 item(s)] done [0.00s].
+## set transactions ...[21 item(s), 26240 transaction(s)] done [0.01s].
+## sorting and recoding items ... [12 item(s)] done [0.00s].
+## creating transaction tree ... done [0.01s].
+## checking subsets of size 1 2 3 4 5 done [0.00s].
+## writing ... [120 rule(s)] done [0.00s].
+## creating S4 object  ... done [0.00s].
+</code></pre>
+
+<pre><code class="r">
+# Number of rules:
+basket_rules
+</code></pre>
+
+<pre><code>## set of 120 rules
+</code></pre>
+
+<pre><code class="r">
+# View the association rules:
+inspect(basket_rules)
+</code></pre>
+
+<pre><code>##     lhs                                                      rhs                                  support confidence    lift
+## 1   {}                                                    =&gt; {AutoCAD WS}                         0.52607     0.5261  1.0000
+## 2   {}                                                    =&gt; {Autodesk 360}                       0.64554     0.6455  1.0000
+## 3   {Autodesk Simulation CFD 360}                         =&gt; {Autodesk Simulation Mechanical 360} 0.01139     0.7293 47.8400
+## 4   {Autodesk Simulation Mechanical 360}                  =&gt; {Autodesk Simulation CFD 360}        0.01139     0.7475 47.8400
+## 5   {Autodesk Simulation CFD 360}                         =&gt; {Autodesk 360}                       0.01189     0.7610  1.1788
+## 6   {Autodesk Simulation Mechanical 360}                  =&gt; {Autodesk 360}                       0.01185     0.7775  1.2044
+## 7   {Autodesk 360 Structural Analysis for Autodesk Revit} =&gt; {Autodesk 360 Rendering}             0.01181     0.5838  2.6371
+## 8   {Autodesk 360 Structural Analysis for Autodesk Revit} =&gt; {AutoCAD WS}                         0.01090     0.5386  1.0238
+## 9   {Autodesk 360 Structural Analysis for Autodesk Revit} =&gt; {Autodesk 360}                       0.01620     0.8004  1.2399
+## 10  {Autodesk PLM 360}                                    =&gt; {AutoCAD WS}                         0.01120     0.5278  1.0033
+## 11  {Autodesk PLM 360}                                    =&gt; {Autodesk 360}                       0.01547     0.7289  1.1291
+## 12  {Autodesk BIM 360 Field}                              =&gt; {BIM 360 Glue}                       0.02027     0.5252  8.4285
+## 13  {Autodesk BIM 360 Field}                              =&gt; {Autodesk 360 Mobile (iOS)}          0.01814     0.4699  3.5708
+## 14  {Autodesk BIM 360 Field}                              =&gt; {AutoCAD WS}                         0.01970     0.5104  0.9702
+## 15  {Autodesk BIM 360 Field}                              =&gt; {Autodesk 360}                       0.02511     0.6505  1.0077
+## 16  {Autodesk 360 Mobile (Android)}                       =&gt; {AutoCAD WS}                         0.04592     0.6973  1.3256
+## 17  {Autodesk 360 Mobile (Android)}                       =&gt; {Autodesk 360}                       0.05537     0.8409  1.3026
+## 18  {BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.03464     0.5560  4.2249
+## 19  {BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.03552     0.5700  1.0836
+## 20  {BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.04737     0.7602  1.1777
+## 21  {Autodesk 360 Mobile (iOS)}                           =&gt; {AutoCAD WS}                         0.08476     0.6441  1.2243
+## 22  {Autodesk 360 Mobile (iOS)}                           =&gt; {Autodesk 360}                       0.10667     0.8106  1.2557
+## 23  {Autodesk 360 Rendering}                              =&gt; {Autodesk 360}                       0.16117     0.7280  1.1277
+## 24  {AutoCAD WS}                                          =&gt; {Autodesk 360}                       0.26540     0.5045  0.7815
+## 25  {Autodesk 360}                                        =&gt; {AutoCAD WS}                         0.26540     0.4111  0.7815
+## 26  {Autodesk 360 Rendering,                                                                                                
+##      Autodesk 360 Structural Analysis for Autodesk Revit} =&gt; {Autodesk 360}                       0.01071     0.9065  1.4042
+## 27  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Structural Analysis for Autodesk Revit} =&gt; {Autodesk 360 Rendering}             0.01071     0.6612  2.9866
+## 28  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Structural Analysis for Autodesk Revit} =&gt; {Autodesk 360}                       0.01021     0.9371  1.4516
+## 29  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Structural Analysis for Autodesk Revit} =&gt; {AutoCAD WS}                         0.01021     0.6306  1.1987
+## 30  {AutoCAD WS,                                                                                                            
+##      Autodesk PLM 360}                                    =&gt; {Autodesk 360}                       0.01025     0.9150  1.4174
+## 31  {Autodesk 360,                                                                                                          
+##      Autodesk PLM 360}                                    =&gt; {AutoCAD WS}                         0.01025     0.6626  1.2595
+## 32  {Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.01433     0.7068  5.3709
+## 33  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field}                              =&gt; {BIM 360 Glue}                       0.01433     0.7899 12.6773
+## 34  {Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk BIM 360 Field}             0.01433     0.4136 10.7147
+## 35  {Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.01315     0.6485  1.2327
+## 36  {AutoCAD WS,                                                                                                            
+##      Autodesk BIM 360 Field}                              =&gt; {BIM 360 Glue}                       0.01315     0.6673 10.7096
+## 37  {Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.01684     0.8308  1.2870
+## 38  {Autodesk 360,                                                                                                          
+##      Autodesk BIM 360 Field}                              =&gt; {BIM 360 Glue}                       0.01684     0.6707 10.7642
+## 39  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360 Rendering}             0.01010     0.5567  2.5148
+## 40  {Autodesk 360 Rendering,                                                                                                
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360 Mobile (iOS)}          0.01010     0.7794  5.9229
+## 41  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field}                              =&gt; {AutoCAD WS}                         0.01315     0.7248  1.3778
+## 42  {AutoCAD WS,                                                                                                            
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360 Mobile (iOS)}          0.01315     0.6673  5.0710
+## 43  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360}                       0.01650     0.9097  1.4091
+## 44  {Autodesk 360,                                                                                                          
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360 Mobile (iOS)}          0.01650     0.6571  4.9931
+## 45  {Autodesk 360 Rendering,                                                                                                
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360}                       0.01235     0.9529  1.4762
+## 46  {Autodesk 360,                                                                                                          
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360 Rendering}             0.01235     0.4917  2.2209
+## 47  {AutoCAD WS,                                                                                                            
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360}                       0.01639     0.8317  1.2884
+## 48  {Autodesk 360,                                                                                                          
+##      Autodesk BIM 360 Field}                              =&gt; {AutoCAD WS}                         0.01639     0.6525  1.2403
+## 49  {Autodesk 360 Mobile (Android),                                                                                         
+##      Autodesk 360 Mobile (iOS)}                           =&gt; {AutoCAD WS}                         0.01162     0.7841  1.4904
+## 50  {Autodesk 360 Mobile (Android),                                                                                         
+##      Autodesk 360 Mobile (iOS)}                           =&gt; {Autodesk 360}                       0.01433     0.9666  1.4973
+## 51  {Autodesk 360 Mobile (Android),                                                                                         
+##      Autodesk 360 Rendering}                              =&gt; {AutoCAD WS}                         0.01612     0.7318  1.3911
+## 52  {Autodesk 360 Mobile (Android),                                                                                         
+##      Autodesk 360 Rendering}                              =&gt; {Autodesk 360}                       0.02107     0.9567  1.4821
+## 53  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (Android)}                       =&gt; {Autodesk 360}                       0.03952     0.8606  1.3331
+## 54  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (Android)}                       =&gt; {AutoCAD WS}                         0.03952     0.7137  1.3567
+## 55  {Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Rendering}             0.01814     0.5237  2.3654
+## 56  {Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.01814     0.7323  5.5649
+## 57  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering}                              =&gt; {BIM 360 Glue}                       0.01814     0.4017  6.4467
+## 58  {Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.02470     0.7129  1.3551
+## 59  {AutoCAD WS,                                                                                                            
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.02470     0.6953  5.2836
+## 60  {Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.03140     0.9065  1.4042
+## 61  {Autodesk 360,                                                                                                          
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.03140     0.6629  5.0376
+## 62  {Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.01753     0.7077  1.3453
+## 63  {AutoCAD WS,                                                                                                            
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Rendering}             0.01753     0.4936  2.2295
+## 64  {Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.02355     0.9508  1.4728
+## 65  {Autodesk 360,                                                                                                          
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Rendering}             0.02355     0.4972  2.2458
+## 66  {AutoCAD WS,                                                                                                            
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.03083     0.8680  1.3446
+## 67  {Autodesk 360,                                                                                                          
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.03083     0.6508  1.2372
+## 68  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering}                              =&gt; {AutoCAD WS}                         0.03121     0.6911  1.3138
+## 69  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering}                              =&gt; {Autodesk 360}                       0.04337     0.9603  1.4876
+## 70  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS)}                           =&gt; {Autodesk 360 Rendering}             0.04337     0.4066  1.8365
+## 71  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS)}                           =&gt; {Autodesk 360}                       0.07123     0.8404  1.3018
+## 72  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS)}                           =&gt; {AutoCAD WS}                         0.07123     0.6677  1.2693
+## 73  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Rendering}                              =&gt; {Autodesk 360}                       0.07207     0.8932  1.3837
+## 74  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Rendering}                              =&gt; {AutoCAD WS}                         0.07207     0.4472  0.8500
+## 75  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.01075     0.7500  1.4257
+## 76  {AutoCAD WS,                                                                                                            
+##      Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.01075     0.8174  6.2115
+## 77  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field}                              =&gt; {BIM 360 Glue}                       0.01075     0.8174 13.1183
+## 78  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk BIM 360 Field}             0.01075     0.4352 11.2727
+## 79  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.01326     0.9255  1.4337
+## 80  {Autodesk 360,                                                                                                          
+##      Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.01326     0.7873  5.9831
+## 81  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field}                              =&gt; {BIM 360 Glue}                       0.01326     0.8037 12.8984
+## 82  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk BIM 360 Field}             0.01326     0.4223 10.9397
+## 83  {AutoCAD WS,                                                                                                            
+##      Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.01193     0.9072  1.4054
+## 84  {Autodesk 360,                                                                                                          
+##      Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.01193     0.7081  1.3461
+## 85  {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk BIM 360 Field}                              =&gt; {BIM 360 Glue}                       0.01193     0.7279 11.6821
+## 86  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360}                       0.01235     0.9391  1.4548
+## 87  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field}                              =&gt; {AutoCAD WS}                         0.01235     0.7483  1.4224
+## 88  {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk BIM 360 Field}                              =&gt; {Autodesk 360 Mobile (iOS)}          0.01235     0.7535  5.7259
+## 89  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (Android),                                                                                         
+##      Autodesk 360 Mobile (iOS)}                           =&gt; {Autodesk 360}                       0.01120     0.9639  1.4932
+## 90  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (Android),                                                                                         
+##      Autodesk 360 Mobile (iOS)}                           =&gt; {AutoCAD WS}                         0.01120     0.7819  1.4863
+## 91  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (Android),                                                                                         
+##      Autodesk 360 Rendering}                              =&gt; {Autodesk 360}                       0.01555     0.9645  1.4942
+## 92  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (Android),                                                                                         
+##      Autodesk 360 Rendering}                              =&gt; {AutoCAD WS}                         0.01555     0.7378  1.4025
+## 93  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.01441     0.7941  1.5095
+## 94  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Rendering}             0.01441     0.5833  2.6350
+## 95  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.01441     0.8217  6.2446
+## 96  {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering}                              =&gt; {BIM 360 Glue}                       0.01441     0.4615  7.4072
+## 97  {Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.01791     0.9874  1.5296
+## 98  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Rendering}             0.01791     0.5704  2.5765
+## 99  {Autodesk 360,                                                                                                          
+##      Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.01791     0.7605  5.7793
+## 100 {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering}                              =&gt; {BIM 360 Glue}                       0.01791     0.4130  6.6283
+## 101 {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.02306     0.9336  1.4463
+## 102 {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.02306     0.7342  1.3957
+## 103 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.02306     0.7478  5.6830
+## 104 {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.01711     0.9761  1.5120
+## 105 {Autodesk 360,                                                                                                          
+##      Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.01711     0.7265  1.3811
+## 106 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Rendering}             0.01711     0.5550  2.5070
+## 107 {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering}                              =&gt; {Autodesk 360}                       0.03030     0.9707  1.5037
+## 108 {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering}                              =&gt; {AutoCAD WS}                         0.03030     0.6986  1.3280
+## 109 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS)}                           =&gt; {Autodesk 360 Rendering}             0.03030     0.4254  1.9214
+## 110 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk 360 Rendering}                              =&gt; {Autodesk 360 Mobile (iOS)}          0.03030     0.4204  3.1948
+## 111 {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.01021     0.9504  1.4722
+## 112 {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.01021     0.7701  1.4639
+## 113 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk BIM 360 Field,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.01021     0.8562  6.5067
+## 114 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk BIM 360 Field}                              =&gt; {BIM 360 Glue}                       0.01021     0.8272 13.2750
+## 115 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk BIM 360 Field}             0.01021     0.4430 11.4745
+## 116 {AutoCAD WS,                                                                                                            
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360}                       0.01421     0.9868  1.5286
+## 117 {Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {AutoCAD WS}                         0.01421     0.7936  1.5086
+## 118 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Rendering}             0.01421     0.6165  2.7849
+## 119 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk 360 Rendering,                                                                                                
+##      BIM 360 Glue}                                        =&gt; {Autodesk 360 Mobile (iOS)}          0.01421     0.8307  6.3129
+## 120 {AutoCAD WS,                                                                                                            
+##      Autodesk 360,                                                                                                          
+##      Autodesk 360 Mobile (iOS),                                                                                             
+##      Autodesk 360 Rendering}                              =&gt; {BIM 360 Glue}                       0.01421     0.4692  7.5299
+</code></pre>
+
+</body>
+
+</html>
+
