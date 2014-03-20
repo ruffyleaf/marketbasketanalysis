@@ -1,0 +1,47 @@
+Market Basket Analysis
+========================================================
+Market Basket Analysis is a specific application of Association rule mining, where retail transaction baskets are analysed to find the products which are likely to be purchased together. The analysis output forms the input for  recomendation engines/marketing strategies. The data "Web Service Association Data.xls" is data taken from Autodesk Inc. where it indicates Products that clients have purchased. The format is according to their ID and product/service.
+
+### Install the "arules" package and other packages required
+1. arules contains the apriori function
+2. gdata is for reading xls
+```{r}
+install.packages("arules")
+install.packages("gdata")
+
+library("arules")
+library("gdata")
+
+```
+
+Data Preparation
+--------------
+1. Create a data frame from the data using read.xls from the gdata library.
+2. Create the transaction listing as the data is not in transactional format
+3. Convert the List into data frame using the plyr library
+```{r}
+adwebservices <- read.xls("Web Service Assocation Data.xls")
+
+#The data is not in transactional format, which APRIORI function will require, so we have to create the a dataframe with transactions
+attach(adwebservices)
+trans_list <- split(Service.Name, Company.ID)
+head(trans_list)
+
+```
+
+### Using the apriori function from arules library, we create the association rules.
+A note on Support: Support is defined as Supp(Z) = P(Z), the probability of the Precedent occuring in the entire set of data.
+A note on Confidence: Confidence is defined as Conf(X -> Y) = Supp(X->Y)/Supp(X) = P(Y|X). In other words, the probably of Y occuring given X.
+```{r}
+# We want to see almost all the types of association rules in the basket. By providing a support of 1% and confidence of 40%.
+# This allows us to view some rules whereby we have a high confidence and low support, implying that there is untapped sales potential
+basket_rules <- apriori(trans_list, parameter= list(supp = 0.1, conf = 0.4, target="rules"))
+basket_rules <- apriori(trans_list, parameter= list(supp = 0.01, conf = 0.4, target="rules"))
+
+# Number of rules:
+basket_rules
+
+# View the association rules:
+inspect(basket_rules)
+
+```
